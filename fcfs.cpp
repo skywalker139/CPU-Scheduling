@@ -60,19 +60,21 @@ vector<process> fcfs(vector<process> processes_set){
     for(auto process: processes_set){ //process = elements of p from main, process=p1 p2 p3...
         if(time<=process.arrival_time){
             //implies cpu is waiting for next task which might arrive after time+x time later, time+x will be arrival time of next process, eg. t=3, next arrival time=4, t=4=starting time
-            time = process.arrival_time;}
-            
+            time = process.arrival_time;
+            process.starting_time = process.arrival_time;}
+
         else if(time>process.arrival_time){
             //t=4 but arrival time for next process is 1, since fifo algo is followed, process with arrival time 1 will be implemented after process with arr time 0 and start time will be 4 
             process.starting_time=time;}
 
-        process.starting_time = process.arrival_time;
         process.completion_time = process.arrival_time + process.burst_time;
         process.waiting_time = process.starting_time - process.arrival_time;
         process.turnaround_time = process.completion_time - process.starting_time;
         time=time+process.burst_time;
     }
 }
+
+
 
 int main(){
     vector<process> process_set{
