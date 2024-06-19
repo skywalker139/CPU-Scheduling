@@ -57,13 +57,14 @@ vector<process> deepcopy_processes(const vector<process>& processes_set){
 void sort_process_set(vector<process> &processes_set){
     for (size_t i = 0; i < processes_set.size(); ++i) {
         for (size_t j = i + 1; j < processes_set.size(); ++j) {
-            if (processes_set[i].arrival_time < processes_set[j].arrival_time ||
-                (processes_set[i].arrival_time == processes_set[j].arrival_time && processes_set[i].pid < processes_set[j].pid)) {
+            if (processes_set[i].arrival_time > processes_set[j].arrival_time ||
+                (processes_set[i].arrival_time == processes_set[j].arrival_time && processes_set[i].pid > processes_set[j].pid)) {
                 swap(processes_set[i], processes_set[j]);
             }
         }
     }
 }
+
 
 float average_waiting_time(const vector<process>& processes_set){
     int total_waiting_time = 0;
@@ -180,7 +181,7 @@ vector<process> priority(vector<process>& processes_set, int aging_factor=1){   
         for (auto& process : remaining_processes) {
             if (process.arrival_time <= time) {
                 
-                if (process.priority > 0 && time - process.last_execution_time >= 3) {   //aging for processes halted more than 3 times
+                if (process.priority > 0 && time - process.last_execution_time >= 3) {   //aging for processes  if halted more than 3 times
                     process.priority--;
                     process.last_execution_time = time;
                 }
@@ -278,6 +279,7 @@ void multilevel_queue(vector<process>& processes_set, int time_quantum){
         } else {
             low_priority_queue.push_back(p);
         }
+    }
 
     fcfs(low_priority_queue);
     round_robin(high_priority_queue, time_quantum);
@@ -294,31 +296,38 @@ void multilevel_queue(vector<process>& processes_set, int time_quantum){
     cout<<"Average Turnaround time for the process is: "<<average_turnaround_time(high_priority_queue)<<endl;
     cout<<"Average Waiting time for the process is: "<<average_waiting_time(high_priority_queue)<<endl;
 
-
-    }
 }
 
 string compare_scheduling_algorithms(const vector<process>& processes, int time_quantum){
     vector<process> fcfs_processes = deepcopy_processes(processes);
     fcfs(fcfs_processes);
     float fcfs_avg_waiting_time = average_waiting_time(fcfs_processes);
+    float fcfs_avg_turnaround_time = average_turnaround_time(fcfs_processes);
 
     vector<process> sjf_processes = deepcopy_processes(processes);
     sjf(sjf_processes);
     float sjf_avg_waiting_time = average_waiting_time(sjf_processes);
+    float sjf_avg_turnaround_time = average_turnaround_time(sjf_processes);
 
     vector<process> rr_processes = deepcopy_processes(processes);
     round_robin(rr_processes, time_quantum);
     float rr_avg_waiting_time = average_waiting_time(rr_processes);
+    float rr_avg_turnaround_time = average_turnaround_time(rr_processes);
 
     vector<process> priority_processes = deepcopy_processes(processes);
     priority(priority_processes);
-    float priority_avg_waiting_time = average_waiting_time(fcfs_processes);
+    float priority_avg_waiting_time = average_waiting_time(priority_processes);
+    float priority_avg_turnaround_time = average_turnaround_time(priority_processes);
 
     cout << "FCFS Average Waiting Time: " << fcfs_avg_waiting_time << endl;
     cout << "SJF Average Waiting Time: " << sjf_avg_waiting_time << endl;
     cout << "Round Robin Average Waiting Time: " << rr_avg_waiting_time << endl;
     cout << "Priority Average Waiting Time: " << priority_avg_waiting_time << endl;
+
+    cout << "FCFS Average Turnaround Time: " << fcfs_avg_turnaround_time << endl;
+    cout << "SJF Average Turnaround Time: " << sjf_avg_turnaround_time << endl;
+    cout << "Round Robin Average Turnaround Time: " << rr_avg_turnaround_time << endl;
+    cout << "Priority Average Turnaround Time: " << priority_avg_turnaround_time << endl;
 
     float min_avg_waiting_time = min({fcfs_avg_waiting_time, sjf_avg_waiting_time, rr_avg_waiting_time,priority_avg_waiting_time});
     if (min_avg_waiting_time == fcfs_avg_waiting_time){
@@ -343,7 +352,7 @@ int main(){
     char choice;
     cout<<"Press Y to execute predefined process set and N for entering details of processes manually..... ";
     cin>>choice;
-    if(choice=='N' || choice=='n') {process_set = predefined_process_set;}
+    if(choice=='Y' || choice=='y') {process_set = predefined_process_set;}
     else if (choice=='n' || choice=='N'){
         int num_processes;
         cout << "Enter the number of processes: ";
@@ -369,10 +378,6 @@ int main(){
             process_set.push_back(p);
         }
     }
-    else if (choice=='y' || choice=='Y'){
-        process_set = predefined_process_set;
-    }
-    
     int time_quantum;
     cout<<"Enter Time Quantum (Enter 1 if not required): ";
     cin>>time_quantum;
@@ -391,7 +396,7 @@ int main(){
     process_details(completed_process_set);
     multilevel_queue(process_set, time_quantum);
 
-    
+    cout<<"Gantt chart (for processes which are non-premptive only): "<<endl;    
     gantt_chart(completed_process_set);
 
     cout<<endl<<"Thank you";
