@@ -94,6 +94,8 @@ The schedulings can be implemented by taking into account various criterion. In 
 Ex. here if through compare_scheduling_algorithms function if I get returned value of string as FCFS, that means FCFS scheduling gives me least average waiting time for the processes so I will implement fcfs algorithm for future processes which are of similar type (we can find similarity through other codes or through combining scheduling with ML or AI or through any other process). 
 Also if I get least average waiting time from FCFS I'll give more weightage to details of the processes gone through fcfs.
 
+In this project only detials of projects are shown, gantt chart is also printed, it can print non-preemptive pocesses very accurately, for preempted processes, there might be slight misplacing of process IDs.  
+
 Another criteria the cpu can take would be priority, for some process which are important, we can implement RR or Priority (that's what MUltilevel does); for small processes we can use commparison.
 Moreover these can also occur simultaneously if we increase number of processors. Eg. each processor would pick one schdeuling criteria and they will all execute it in the same time then lastly compare them.
 
