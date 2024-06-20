@@ -5,7 +5,7 @@ struct process{
     int arrival_time=0;
     int burst_time;
     int priority;
-    int queue_priority=0;
+    int queue_priority=0; //for multilevel
     int starting_time;
     int waiting_time;
     int response_time;
@@ -298,7 +298,7 @@ void multilevel_queue(vector<process>& processes_set, int time_quantum){
 
 }
 
-string compare_scheduling_algorithms(const vector<process>& processes, int time_quantum){
+string compare_scheduling_algorithms(const vector<process>& processes, int time_quantum, int aging_factor=1){
     vector<process> fcfs_processes = deepcopy_processes(processes);
     fcfs(fcfs_processes);
     float fcfs_avg_waiting_time = average_waiting_time(fcfs_processes);
@@ -315,7 +315,7 @@ string compare_scheduling_algorithms(const vector<process>& processes, int time_
     float rr_avg_turnaround_time = average_turnaround_time(rr_processes);
 
     vector<process> priority_processes = deepcopy_processes(processes);
-    priority(priority_processes);
+    priority(priority_processes, aging_factor);
     float priority_avg_waiting_time = average_waiting_time(priority_processes);
     float priority_avg_turnaround_time = average_turnaround_time(priority_processes);
 
@@ -381,6 +381,10 @@ int main(){
     int time_quantum;
     cout<<"Enter Time Quantum (Enter 1 if not required): ";
     cin>>time_quantum;
+
+    int aging_factor;
+    cout<<"Enter Aging Factor (Enter 1 if not required): ";
+    cin>>aging_factor;
     
     string system_process = compare_scheduling_algorithms(process_set, time_quantum);
     cout<<system_process<<"scheduling has the shortest average waiting time, so it is most appropriate criteria for cup to execute.\n Process details after"<<system_process<<" scheduling is: "<<endl;
